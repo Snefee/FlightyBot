@@ -79,11 +79,15 @@ namespace FlightyBot.Commands.Slash
                 string mapImageUrl = MapPathGenerator.GenerateMapUrl(flight.Location, flight.Arrival.Airport.Location, Config.mapBoxApiKey);
                 embedMessage.WithImageUrl(mapImageUrl);
                 Console.WriteLine($"\n[Generated Mapbox URL]: {mapImageUrl}");
+            } else
+            {
+                embedMessage.Footer = new DiscordEmbedBuilder.EmbedFooter();
+                embedMessage.Footer.Text = "Map generation failed: unable to get aircraft position";
             }
 
 
-            //Get flags for airports
-            string departureFlag = GetFlagEmoji(flight.Departure?.Airport?.CountryCode);
+                //Get flags for airports
+                string departureFlag = GetFlagEmoji(flight.Departure?.Airport?.CountryCode);
             string arrivalFlag = GetFlagEmoji(flight.Arrival?.Airport?.CountryCode);
 
             embedMessage.AddField("Status", flight.Status ?? "N/A", true);
@@ -98,6 +102,8 @@ namespace FlightyBot.Commands.Slash
                 $"**Airport:** {arrivalFlag} {flight.Arrival?.Airport?.Name ?? "N/A"} (`{flight.Arrival?.Airport?.Iata ?? "N/A"}`)\n" +
                 $"**Scheduled:** {FormatDiscordTimestamp(flight.Arrival?.ScheduledTime?.Local)}\n" +
                 $"**Expected:** {FormatDiscordTimestamp(flight.Arrival?.PredictedTime?.Local)}", false);
+
+            
 
 
             // ENABLE LOGS FOR DEBUGGING
