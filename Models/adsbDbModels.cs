@@ -2,6 +2,12 @@
 
 namespace FlightyBot.Models
 {
+    public class AdsbDbApiResponse
+    {
+        [JsonProperty("response")]
+        public AdsbDbResponse Response { get; set; }
+    }
+
     public class AdsbDbResponse
     {
         [JsonProperty("aircraft")]
@@ -24,5 +30,12 @@ namespace FlightyBot.Models
 
         [JsonProperty("url_photo")]
         public string PhotoUrl { get; set; }
+
+        [JsonProperty("registered_owner_country_name")]
+        public string OwnerCountryName { get; set; }
+
+        [JsonProperty("registered_owner")]
+        public string RegisteredOwner { get; set; }
+
     }
 }

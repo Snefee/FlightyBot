@@ -69,30 +69,26 @@ namespace FlightyBot.Commands.Slash
 
             var embedMessage = new DiscordEmbedBuilder
             {
-                Title = $"{flight.Airline?.Name} {flightNumber}",
+                Title = $"{flight.Airline?.Name} {flight.Number}",
                 Color = DiscordColor.Cyan,
             };
-
 
             if (flight.Location != null && flight.Arrival?.Airport?.Location != null && !string.IsNullOrEmpty(Config.mapBoxApiKey))
             {
                 string mapImageUrl = MapPathGenerator.GenerateMapUrl(flight.Location, flight.Arrival.Airport.Location, Config.mapBoxApiKey);
                 embedMessage.WithImageUrl(mapImageUrl);
-                Console.WriteLine($"\n[Generated Mapbox URL]: {mapImageUrl}");
             } else
             {
                 embedMessage.Footer = new DiscordEmbedBuilder.EmbedFooter();
                 embedMessage.Footer.Text = "Map generation failed: unable to get aircraft position";
             }
 
-
-                //Get flags for airports
-                string departureFlag = GetFlagEmoji(flight.Departure?.Airport?.CountryCode);
+            string departureFlag = GetFlagEmoji(flight.Departure?.Airport?.CountryCode);
             string arrivalFlag = GetFlagEmoji(flight.Arrival?.Airport?.CountryCode);
 
             embedMessage.AddField("Status", flight.Status ?? "N/A", true);
             embedMessage.AddField("Airline", flight.Airline?.Name ?? "N/A", true);
-            embedMessage.AddField("Aircraft", $"{flight.Aircraft?.Model ?? "N/A"}", true);
+            embedMessage.AddField("Aircraft", $"{flight.Aircraft?.Model ?? "N/A"} (`{flight.Aircraft?.Registration ?? "N/A"}`)", true);
 
             embedMessage.AddField("Departure",
                 $"**Airport:** {departureFlag} {flight.Departure?.Airport?.Name ?? "N/A"} (`{flight.Departure?.Airport?.Iata ?? "N/A"}`)\n" +
@@ -103,14 +99,19 @@ namespace FlightyBot.Commands.Slash
                 $"**Scheduled:** {FormatDiscordTimestamp(flight.Arrival?.ScheduledTime?.Local)}\n" +
                 $"**Expected:** {FormatDiscordTimestamp(flight.Arrival?.PredictedTime?.Local)}", false);
 
-            
+            var builder = new DiscordWebhookBuilder().AddEmbed(embedMessage);
 
+            if (!string.IsNullOrEmpty(flight.Aircraft?.Registration))
+            {
+                var planeInfoButton = new DiscordButtonComponent(
+                    ButtonStyle.Primary,
+                    $"plane_info_{flight.Aircraft.Registration}",
+                    "✈️ Plane Info"
+                );
+                builder.AddComponents(planeInfoButton);
+            }
 
-            // ENABLE LOGS FOR DEBUGGING
-            Console.WriteLine(JsonConvert.SerializeObject(flight, Formatting.Indented));
-
-
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embedMessage));
+            var response = await ctx.EditResponseAsync(builder);
         }
 
 

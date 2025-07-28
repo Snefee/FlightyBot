@@ -48,8 +48,8 @@ namespace FlightyBot.Services
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
-                    var adsbDbResponse = JsonConvert.DeserializeObject<AdsbDbResponse>(jsonResponse);
-                    return adsbDbResponse?.Aircraft;
+                    var apiResponse = JsonConvert.DeserializeObject<AdsbDbApiResponse>(jsonResponse);
+                    return apiResponse?.Response?.Aircraft;
                 }
                 return null;
             }
