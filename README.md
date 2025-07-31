@@ -28,3 +28,11 @@ Example response after pressing the "✈️Plane Info" button:
 <br>
 <img width="520" height="506" alt="image" src="https://github.com/user-attachments/assets/10592e7b-c896-4865-b1ac-1b36f381cc1e" />
 
+## Planned features
+- Seat map of a tracked plane
+- Track with notifications about arrival / departure
+- Calculate how much percent of a trip is done [with progress bar]
+
+
+##
+_FlightyBot is not associated in any way with the Flighty™ app_
